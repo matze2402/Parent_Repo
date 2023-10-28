@@ -7,7 +7,7 @@ on:
   
   push:
     branches:
-      - main 
+      - pull 
   
 jobs:
   trigger_workflow:
