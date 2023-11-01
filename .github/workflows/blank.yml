@@ -22,7 +22,7 @@ jobs:
         id: push_directory
         uses: cpina/github-action-push-to-another-repository@main
         env:
-          API_TOKEN_GITHUB: ${{ secrets.hello }}  #den key muss ich noch erstellen
+          API_TOKEN_GITHUB: ${{ secrets.test }}  #den key muss ich noch erstellen
         with:
           source-directory: output/
           destination-github-username: 'matze240'
