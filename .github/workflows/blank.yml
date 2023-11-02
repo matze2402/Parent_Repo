@@ -25,5 +25,5 @@ jobs:
           source-directory: 'output'
           destination-github-username: 'Matze240'
           destination-repository-name: 'child_repo'
-          user-email: matzegithub@gmail.com
+          #user-email: matzegithub@gmail.com
           target-branch: main
