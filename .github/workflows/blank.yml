@@ -25,12 +25,11 @@ jobs:
 
     # Build steps
     - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4   
       with:
-        node-version: '18' 
-    - name: Node Install
-      run: npm ci
-    - name: Node Build (lint, test, coverage, doc, build, package)
-      run: npm run package
+         node-version: 18
+    - run: npm ci
+    - run: npm test
 
     # Commit and push all changed files. 
     # Must only affect files that are listed in "paths-ignore".
