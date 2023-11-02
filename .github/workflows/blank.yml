@@ -1,10 +1,14 @@
----
-
 name: Continuous Integration
 on:
   push:
     branches:
       - main
+    # Ignore changes in folders that are affected by the auto commit. (Node.js project)
+    paths-ignore: 
+      - 'coverage/**'
+      - 'devdist/**'
+      - 'dist/**'
+      - 'docs/**'
   pull_request:
     branches:
       - main
@@ -16,6 +20,8 @@ jobs:
       CI_COMMIT_AUTHOR: Continuous Integration
     steps:
     - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.test }}
 
     # Build steps
     - uses: actions/setup-node@v3
@@ -26,12 +32,14 @@ jobs:
     - name: Node Build (lint, test, coverage, doc, build, package)
       run: npm run package
 
-    # Commit and push all changed files.
+    # Commit and push all changed files. 
+    # Must only affect files that are listed in "paths-ignore".
     - name: GIT Commit Build Artifacts (coverage, dist, devdist, docs)
-      # Only run on main branch push (e.g. after pull request merge).
+      # Only run on main branch push (e.g. pull request merge).
       if: github.event_name == 'push'
       run: |
-        git config --global user.name "${{ env.Matze240 }}"
+        git config --global user.name "${{ env.matze240 }}"
         git config --global user.email "matzegithub@gmail.com"
-        git commit -a -m "${{ env.CI_COMMIT_MESSAGE }}"
+        git add coverage devdist dist docs
+        git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
         git push
