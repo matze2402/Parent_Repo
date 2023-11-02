@@ -1,44 +1,29 @@
-name: Continuous Integration
+name: CI
+
 on:
   push:
-    branches:
-      - main
-    # Ignore changes in folders that are affected by the auto commit. (Node.js project)
-    paths-ignore: 
-      - 'coverage/**'
-      - 'devdist/**'
-      - 'dist/**'
-      - 'docs/**'
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env: 
-      CI_COMMIT_MESSAGE: Continuous Integration Build Artifacts
-      CI_COMMIT_AUTHOR: Continuous Integration
+    container: pandoc/latex    # "ubuntu" is a more generic container
+                               # using "pandoc/latex" because of dependencies
+                               # used in the specific "build.sh"
     steps:
-    - uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.test }}
-
-    # Build steps
-    - uses: actions/setup-node@v3
-    - uses: actions/checkout@v4   
-      with:
-         node-version: 18
-    - run: npm ci
-    - run: npm test
-
-    # Commit and push all changed files. 
-    # Must only affect files that are listed in "paths-ignore".
-    - name: GIT Commit Build Artifacts (coverage, dist, devdist, docs)
-      # Only run on main branch push (e.g. pull request merge).
-      if: github.event_name == 'push'
-      run: |
-        git config --global user.name "${{ env.matze240 }}"
-        git config --global user.email "matzegithub@gmail.com"
-        git add coverage devdist dist docs
-        git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
-        git push
+      - uses: actions/checkout@v2
+      - name: creates output
+        run:  sh ./build.sh # some command from your repository that creates
+                            # output to "source-directory" ("output" in the example)
+      - name: Pushes to another repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.test }}
+        with:
+          source-directory: 'output'
+          destination-github-username: 'Matze240'
+          destination-repository-name: 'child_repo'
+          user-email: matzegithub@gmail.com
+          target-branch: main
