@@ -1,34 +1,37 @@
-name: Copy updated OpenAPI file
+---
 
-# only run this workflow when the openapi file has changed on the master branch
-on: 
+name: Continuous Integration
+on:
   push:
-    branches: 
-      - master
-    #paths:
-      #- 'notehub/api/openapi.yaml'
-
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 jobs:
-  copy_openapi_file_to_notehub_js: 
+  build:
     runs-on: ubuntu-latest
+    env: 
+      CI_COMMIT_MESSAGE: Continuous Integration Build Artifacts
+      CI_COMMIT_AUTHOR: Continuous Integration
     steps:
-    # check out notehub project
-    - name: Check out  project
-      uses: actions/checkout@v3
-    # check out notehub-js project using token generated in that project to successfully access it from inside the Notehub GitHub Action workflow
-    - name: Check out Notehub JS project
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+
+    # Build steps
+    - uses: actions/setup-node@v3
       with:
-        repository: Matze240/child_repo
-        path: ./child_repo
-        token: ${{ secrets.test }}
-    # make a copy the openapi file from notehub project
-    - name: Copy OpenAPI file
-      run: bash ./.github/scripts/copy-openapi-file.sh
-      env:
-        DESTINATION_PATH: ./child_repo/
-    # make a branch in notehub-js repo and push the copy of the openapi file there
-    #- name: Push to notehub-js repo
-      #run: bash ./.github/scripts/push-openapi-to-notehub-js.sh
-      #env:
-        #BRANCH: feat-openapi-update
+        node-version: '12' 
+    - name: Node Install
+      run: npm ci
+    - name: Node Build (lint, test, coverage, doc, build, package)
+      run: npm run package
+
+    # Commit and push all changed files.
+    - name: GIT Commit Build Artifacts (coverage, dist, devdist, docs)
+      # Only run on main branch push (e.g. after pull request merge).
+      if: github.event_name == 'push'
+      run: |
+        git config --global user.name "${{ env.Matze240 }}"
+        git config --global user.email "matzegithub@gmail.com"
+        git commit -a -m "${{ env.CI_COMMIT_MESSAGE }}"
+        git push
