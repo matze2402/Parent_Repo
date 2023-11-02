@@ -38,8 +38,8 @@ jobs:
       # Only run on main branch push (e.g. pull request merge).
       if: github.event_name == 'push'
       run: |
-        git config --global user.name "${{ env.matze240 }}"
-        git config --global user.email "matzegithub@gmail.com"
+        git config --global user.name "${{ env.matze2402 }}"
+        git config --global user.email "matthias.gacka@tu-dortmund.de"
         git add coverage devdist dist docs
         git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
         git push
