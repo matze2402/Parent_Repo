@@ -22,7 +22,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.test }}
         with:
-          source-directory: output/main
+          source-directory: output/main/test.md
           destination-github-username: 'Matze240'
           destination-repository-name: 'child_repo'
           user-email: matzegithub@gmail.com
