@@ -16,8 +16,8 @@ jobs:
         API_TOKEN_GITHUB: ${{ secrets.test }}
       with:
         source_file: 'abc.md'
-        destination_repo: 'Matze240/child_repo/test'
-        #destination_folder: 'test-dir'
+        destination_repo: 'Matze240/child_repo'
+        destination_folder: 'test-dir'
         user_email: 'matzegithub@gmail.com'
         user_name: 'matze240'
         commit_message: 'A custom message for the commit'
