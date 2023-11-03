@@ -1,29 +1,23 @@
-name: CI
+---
+name: Push File
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: push
 
 jobs:
-  build:
+  copy-file:
     runs-on: ubuntu-latest
-    container: pandoc/latex    # "ubuntu" is a more generic container
-                               # using "pandoc/latex" because of dependencies
-                               # used in the specific "build.sh"
     steps:
-      - uses: actions/checkout@v2
-      - name: creates output
-        run:  sh ./build.sh # some command from your repository that creates
-                            # output to "source-directory" ("output" in the example)
-      - name: Pushes to another repository
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.test }}
-        with:
-          source-directory: output/.
-          destination-github-username: 'Matze240'
-          destination-repository-name: 'child_repo'
-          user-email: matzegithub@gmail.com
-          target-branch: main
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Pushes test file
+      uses: dmnemec/copy_file_to_another_repo_action@main
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.test }}
+      with:
+        source_file: 'test.md'
+        destination_repo: 'Matze240/child_repo'
+        #destination_folder: 'test-dir'
+        user_email: 'matzegithub@gmail.com'
+        user_name: 'matze240'
+        commit_message: 'A custom message for the commit'
